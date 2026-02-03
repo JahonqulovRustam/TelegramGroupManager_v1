@@ -85,10 +85,25 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const loadFromDB = async () => {
-      const currentToken = localStorage.getItem('crm_bot_token') || '';
-      if (currentToken !== botToken) setBotToken(currentToken);
+      // 1. Try to get token from DB (Source of Truth)
+      try {
+        const dbToken = await import('./services/dbService.ts').then(m => m.getBotToken());
+        if (dbToken && dbToken !== botToken) {
+          setBotToken(dbToken);
+          localStorage.setItem('crm_bot_token', dbToken);
+        } else {
+          // Fallback to local
+          const currentToken = localStorage.getItem('crm_bot_token') || '';
+          if (currentToken !== botToken && !dbToken) setBotToken(currentToken);
+        }
+      } catch (e) {
+        console.warn("Could not fetch token from DB", e);
+      }
 
-      if (currentUser && currentToken) {
+      const currentToken = localStorage.getItem('crm_bot_token') || '';
+      // We already handled setting it above, but ensure redundancy
+
+      if (currentUser) {
         try {
           const [dbGroups, dbMessages] = await Promise.all([getAllGroups(), getAllMessages()]);
           dbMessages.forEach(m => processedIdsRef.current.add(m.id));
@@ -99,7 +114,7 @@ const App: React.FC = () => {
       } else setState(prev => ({ ...prev, isLoading: false }));
     };
     loadFromDB();
-  }, [currentUser, botToken]);
+  }, [currentUser]); // Removed botToken dependency to avoid loops, we set it inside
 
   useEffect(() => {
     if (!botToken || !currentUser || state.isLoading) return;

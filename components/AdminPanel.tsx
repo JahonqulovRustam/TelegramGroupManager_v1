@@ -231,14 +231,21 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, botToken, setBotToken,
                       setBotToken(newToken);
                       localStorage.setItem('crm_bot_token', newToken);
                     }}
+                    onBlur={() => {
+                      // Save to DB when focus lost or explicitly
+                      import('../services/dbService').then(m => m.saveBotToken(botToken));
+                    }}
                     placeholder="Bot tokenini kiriting..."
                     className="bg-slate-950 p-4 rounded-2xl border border-white/5 text-xs text-slate-300 font-mono text-center outline-none focus:border-indigo-500 transition-colors"
                   />
-                  <p className="text-[9px] text-slate-600 uppercase font-bold">Token localStorage da saqlanadi</p>
+                  <p className="text-[9px] text-slate-600 uppercase font-bold">Token Baza va LocalStorage da saqlanadi</p>
                 </div>
 
                 <div className="flex items-center justify-center gap-4">
-                  <button onClick={() => checkBotStatus()} className="bg-slate-800 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Qayta tekshirish (Save)</button>
+                  <button onClick={() => {
+                    import('../services/dbService').then(m => m.saveBotToken(botToken));
+                    checkBotStatus();
+                  }} className="bg-slate-800 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Qayta tekshirish (Save)</button>
                 </div>
               </div>
 

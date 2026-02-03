@@ -105,22 +105,49 @@ export const deleteUserFromDB = async (userId: string) => {
   if (error) console.error("Supabase Delete User Error:", error);
 };
 
+export const saveBotToken = async (token: string) => {
+  if (!isConnected()) return;
+  // We use a 'settings' table. If it doesn't exist, this will fail.
+  // Ideally, create a table: create table settings (key text primary key, value text);
+  const { error } = await supabase!.from('settings').upsert({
+    key: 'bot_token',
+    value: token
+  });
+  if (error) console.error("Supabase Save Token Error:", error);
+};
+
+export const getBotToken = async (): Promise<string | null> => {
+  if (!isConnected()) return null;
+  const { data, error } = await supabase!
+    .from('settings')
+    .select('value')
+    .eq('key', 'bot_token')
+    .single();
+
+  if (error) {
+    // Silent fail as table might not exist
+    return null;
+  }
+  return data?.value || null;
+};
+
 export const clearDatabase = async () => {
   const botToken = localStorage.getItem('crm_bot_token');
   const theme = localStorage.getItem('crm_theme');
-  
+
   if (isConnected()) {
     try {
       await supabase!.from('messages').delete().neq('id', '0');
       await supabase!.from('groups').delete().neq('id', '0');
       await supabase!.from('users').delete().neq('id', 'super-root');
+      // Optional: don't clear settings
     } catch (e) {
       console.error("Clear database failed:", e);
     }
   }
-  
+
   localStorage.clear();
-  
+
   if (botToken) localStorage.setItem('crm_bot_token', botToken);
   if (theme) localStorage.setItem('crm_theme', theme);
 };

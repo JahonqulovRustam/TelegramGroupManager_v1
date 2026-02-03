@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from './components/Sidebar.tsx';
 import ChatWindow from './components/ChatWindow.tsx';
@@ -249,7 +249,7 @@ const App: React.FC = () => {
           </div>
         )}
         {state.currentPath === 'MEDDATA' && <ExternalAppLauncher title="MedData Auth" url="https://103-auth.meddata.uz/Account/Login" icon={<Activity className="w-16 h-16" />} color="bg-blue-600" description="Tez yordam monitoring tizimi" />}
-        {state.currentPath === 'OPTX' && <ExternalAppLauncher title="Optx DIS" url="https://dis.optx.uz/" icon={<Box className="w-16 h-16" />} color="bg-purple-600" description="Analitika va tahlil platformasi" />}
+        {state.currentPath === 'OPTX' && <ExternalAppLauncher title="Optx DIS" url="https://dis-auth.optx.uz/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fresponse_type%3Dcode%26client_id%3Duds_front%26state%3DSU0wam9ZV0szWEFZcUY2Vk1RS2J-QWhmamFMcnpBTE9VVFlZLWRIRWhaYWVj;%25252F%26redirect_uri%3Dhttps%253A%252F%252Fdis.optx.uz%252F%26scope%3Dopenid%2520profile%2520offline_access%26code_challenge%3Drp8r7OqSZcDObN2mk0udUH8J1QW-qEkuqVBQLrHYAs0%26code_challenge_method%3DS256%26nonce%3DSU0wam9ZV0szWEFZcUY2Vk1RS2J-QWhmamFMcnpBTE9VVFlZLWRIRWhaYWVj" icon={<Box className="w-16 h-16" />} color="bg-purple-600" description="Analitika va tahlil platformasi" />}
 
         {showAdminPanel && canAdmin && <AdminPanel currentUser={currentUser} onClose={() => setShowAdminPanel(false)} botToken={botToken} setBotToken={setBotToken} onGroupsUpdated={async () => {
           const dbGroups = await getAllGroups();
@@ -291,3 +291,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
